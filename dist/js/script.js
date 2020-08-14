@@ -133,8 +133,12 @@ const tabsWorks = () => {
 
   tabContainer.addEventListener('click', e => {
     if (e.target && e.target.classList.contains('tabheader__item')) {
-      disableAllBtnAndWindow();
-      activateTabAndWindow(e.target.getAttribute('data-num'));
+      tabBtns.forEach((btn, i) => {
+        if (e.target === btn) {
+          disableAllBtnAndWindow();
+          activateTabAndWindow(i);
+        }
+      });
     }
   });
 };
