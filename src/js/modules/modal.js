@@ -20,6 +20,7 @@ const modal = () => {
         modalActiveBtns.forEach(btn => {
             btn.removeEventListener('click', displayModalWindow);
         });
+        window.removeEventListener('scroll', displayExstraModalWindow);
     };
 
     const hideModalWindow = () => {
@@ -42,12 +43,18 @@ const modal = () => {
             if (inpt.value === '' || inpt.value.length < 4) {
                 inpt.style.border = '1px red solid';
                 result = false;
-            }
-            else {
+            } else {
                 inpt.style.border = 'none';
             }
         });
         return result;
+    };
+
+    const displayExstraModalWindow = () => {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.offsetHeight) {
+            displayModalWindow();
+            window.removeEventListener('scroll', displayExstraModalWindow);
+        }
     };
 
     modalActiveBtns.forEach(btn => {
@@ -73,6 +80,7 @@ const modal = () => {
             hideModalWindow();
         }
     });
+    window.addEventListener('scroll', displayExstraModalWindow);
 };
 
 export default modal;
