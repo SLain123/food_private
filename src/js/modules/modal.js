@@ -16,10 +16,19 @@ const modal = () => {
         modalWindow.classList.remove('modal_hide');
         document.body.style.paddingRight = `${detectPadding()}px`;
         document.body.classList.add('no-scroll');
+
+        modalActiveBtns.forEach(btn => {
+            btn.removeEventListener('click', displayModalWindow);
+        });
     };
 
     const hideModalWindow = () => {
         modalWindow.classList.remove('modal_show');
+
+        modalActiveBtns.forEach(btn => {
+            btn.addEventListener('click', displayModalWindow);
+        });
+
         setTimeout(() => {
             document.body.style.paddingRight = 0;
             document.body.classList.remove('no-scroll');
@@ -47,6 +56,11 @@ const modal = () => {
     modalCloseBtn.addEventListener('click', hideModalWindow);
     modalWindow.addEventListener('click', (e) => {
         if (e.target.classList.contains('modal')) {
+            hideModalWindow();
+        }
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "Escape" && modalWindow.classList.contains('modal_show')) {
             hideModalWindow();
         }
     });
