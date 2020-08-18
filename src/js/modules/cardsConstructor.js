@@ -1,7 +1,7 @@
 'use strict';
 
 class Card {
-    constructor(imgSrc, imgDesc, title, desc, delvr, price, parent) {
+    constructor(imgSrc, imgDesc, title, desc, delvr, price, parent, ...extraClasses) {
         this.imgSrc = imgSrc;
         this.imgDesc = imgDesc;
         this.title = title;
@@ -9,9 +9,10 @@ class Card {
         this.delvr = delvr;
         this.price = price;
         this.parentBlock = parent;
+        this.extraClasses = extraClasses;
     }
 
-    _createBlock(tag, classCss = 'patern', inText = '') {
+    _createBlock(tag, classCss = 'empty', inText = '') {
         const block = document.createElement(tag);
         block.classList.add(classCss);
         block.innerText = inText;
@@ -37,6 +38,11 @@ class Card {
         const spanOfPrice = this._createBlock('span', 'menu__item-cost-num', this.price);
         const totalBlock = this._createBlock('div', 'menu__item-total');
 
+        if (this.extraClasses.length !== 0) {
+            this.extraClasses.forEach(className => {
+                mainBlock.classList.add(className);
+            });
+        }
         img.src = this.imgSrc;
         img.alt = this.imgDesc;
         
