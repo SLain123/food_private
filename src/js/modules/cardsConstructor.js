@@ -1,13 +1,14 @@
 'use strict';
 
 class Card {
-    constructor(imgSrc, imgDesc, title, desc, delvr, price) {
+    constructor(imgSrc, imgDesc, title, desc, delvr, price, parent) {
         this.imgSrc = imgSrc;
         this.imgDesc = imgDesc;
         this.title = title;
         this.desc = desc;
         this.delvr = delvr;
         this.price = price;
+        this.parentBlock = parent;
     }
 
     _createBlock(tag, classCss = 'patern', inText = '') {
@@ -43,7 +44,7 @@ class Card {
         this._appendBlock(priceBlock, [costBlock, totalBlock]);
         this._appendBlock(mainBlock, [img, h3, describeBlock, deliveryBlock, priceBlock]);
         
-        return mainBlock;
+        this.parentBlock.append(mainBlock);
     }
 }
 
