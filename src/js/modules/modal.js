@@ -4,8 +4,12 @@ const modal = () => {
     const modalActiveBtns = document.querySelectorAll('[data-modal]');
     const modalWindow = document.querySelector('.modal');
     const modalCloseBtn = document.querySelector('[data-close]');
-    const modalSendBtn = document.querySelector('[data-send]');
-    const allFormInputs = document.querySelectorAll('.modal__content input');
+    const allForms = document.querySelectorAll('form');
+    const messages = {
+        load: 'Загрузка',
+        success: 'Данные отправлены',
+        failure: 'Произошла ошибка при отправке'
+    };
 
     const detectPadding = () => {
         return window.innerWidth - document.documentElement.clientWidth;
@@ -37,24 +41,43 @@ const modal = () => {
         }, 800);
     };
 
-    const checkValidate = () => {
-        let result = true;
-        allFormInputs.forEach(inpt => {
-            if (inpt.value === '' || inpt.value.length < 4) {
-                inpt.style.border = '1px red solid';
-                result = false;
-            } else {
-                inpt.style.border = 'none';
-            }
-        });
-        return result;
-    };
-
     const displayExstraModalWindow = () => {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.offsetHeight) {
             displayModalWindow();
             window.removeEventListener('scroll', displayExstraModalWindow);
         }
+    };
+
+    const sendDataToServer = (form) => {
+        const request = new XMLHttpRequest();
+        request.open('POST', './php/server.php');
+
+        const formData = new FormData(form);
+        request.send(formData);
+
+        request.addEventListener('load', () => {
+            const textBlock = document.querySelector('.modal__status');
+
+            if (request.status === 200) {
+                console.log(request.response);
+                form.reset();
+                textBlock.innerText = messages.success;
+                setTimeout(() => {
+                    textBlock.remove();
+                }, 3000);
+            }
+            else {
+                textBlock.innerText = messages.error;
+            }
+        });
+    };
+
+    const statusBlockMessage = (text, form) => {
+        const div = document.createElement('div');
+        div.classList.add('modal__status');
+        div.innerText = text;
+
+        form.insertAdjacentElement('afterEnd', div);
     };
 
     modalActiveBtns.forEach(btn => {
@@ -71,16 +94,14 @@ const modal = () => {
             hideModalWindow();
         }
     });
-    modalSendBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (checkValidate()) {
-            allFormInputs.forEach(inpt => {
-                inpt.value = '';
-            });
-            hideModalWindow();
-        }
-    });
     window.addEventListener('scroll', displayExstraModalWindow);
+    allForms.forEach(form => {
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            statusBlockMessage(messages.load, form);
+            sendDataToServer(form);
+        });
+    });
 };
 
 export default modal;

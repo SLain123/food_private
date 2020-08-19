@@ -61,6 +61,11 @@
         animation-name: fade-modal-show;
         animation-duration: 1s;
     }
+    &__status {
+        text-align: center;
+        margin-top: 20px;
+        font-weight: 700;
+    }
     .btn {
         display: block;
         width: 280px;
