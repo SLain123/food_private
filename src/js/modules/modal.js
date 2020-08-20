@@ -5,8 +5,9 @@ const modal = () => {
     const modalWindow = document.querySelector('.modal');
     const modalCloseBtn = document.querySelector('[data-close]');
     const allForms = document.querySelectorAll('form');
+    const modalContent = document.querySelector('.modal__content');
     const messages = {
-        load: 'Загрузка',
+        load: './img/spinner.svg',
         success: 'Данные отправлены',
         failure: 'Произошла ошибка при отправке'
     };
@@ -56,28 +57,45 @@ const modal = () => {
         request.send(formData);
 
         request.addEventListener('load', () => {
-            const textBlock = document.querySelector('.modal__status');
-
             if (request.status === 200) {
                 console.log(request.response);
+                
                 form.reset();
-                textBlock.innerText = messages.success;
-                setTimeout(() => {
-                    textBlock.remove();
-                }, 3000);
+                totalBlockMessage(messages.success);
             }
             else {
-                textBlock.innerText = messages.error;
+                totalBlockMessage(messages.failure);
             }
         });
     };
 
-    const statusBlockMessage = (text, form) => {
+    const statusBlockMessage = (form) => {
+        const img = document.createElement('img');
+        img.classList.add('modal__spinner');
+        img.src = messages.load;
+
+        form.insertAdjacentElement('afterEnd', img);
+    };
+
+    const totalBlockMessage = (text) => {
+        const img = document.querySelector('.modal__spinner');
         const div = document.createElement('div');
+
+        displayModalWindow();
+        allForms[1].classList.add('modal_hide');
+        img.remove();
         div.classList.add('modal__status');
         div.innerText = text;
+        modalContent.append(div);
 
-        form.insertAdjacentElement('afterEnd', div);
+        setTimeout(() => {
+            hideModalWindow();
+        },3000);
+
+        setTimeout(() => {
+            div.remove();
+            allForms[1].classList.remove('modal_hide');
+        }, 3800);
     };
 
     modalActiveBtns.forEach(btn => {
@@ -98,7 +116,7 @@ const modal = () => {
     allForms.forEach(form => {
         form.addEventListener('submit', e => {
             e.preventDefault();
-            statusBlockMessage(messages.load, form);
+            statusBlockMessage(form);
             sendDataToServer(form);
         });
     });
