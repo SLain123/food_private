@@ -47,6 +47,9 @@ a {
   font-size: 36px;
   font-weight: 400; }
 
+.no-scroll {
+  overflow-y: hidden; }
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -369,7 +372,8 @@ a {
       margin-top: 20px; }
     .menu__item-descr {
       margin-top: 20px;
-      padding: 0 20px; }
+      padding: 0 20px;
+      min-height: 135px; }
     .menu__item-divider {
       width: 100%;
       height: 1px;
@@ -480,11 +484,12 @@ a {
   top: 0;
   left: 0;
   z-index: 1050;
-  display: none;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.5); }
+  background-color: rgba(0, 0, 0, 0.5);
+  animation-name: fade-modal-hide;
+  animation-duration: 1s; }
   .modal__dialog {
     max-width: 500px;
     margin: 40px auto; }
@@ -524,7 +529,36 @@ a {
     text-align: center;
     padding: 0 20px;
     outline: none; }
+  .modal_hide {
+    display: none; }
+  .modal_show {
+    display: block;
+    animation-name: fade-modal-show;
+    animation-duration: 1s; }
+  .modal__status {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: 700;
+    box-sizing: border-box;
+    height: 236px;
+    padding-top: 20%;
+    font-size: 24px; }
+  .modal__spinner {
+    display: block;
+    margin: 20px auto 0 auto; }
   .modal .btn {
     display: block;
     width: 280px;
     margin: 0 auto; }
+
+@keyframes fade-modal-show {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+
+@keyframes fade-modal-hide {
+  from {
+    opacity: 1; }
+  to {
+    opacity: 0; } }
