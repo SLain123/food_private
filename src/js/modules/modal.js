@@ -50,22 +50,30 @@ const modal = () => {
     };
 
     const sendDataToServer = (form) => {
-        const request = new XMLHttpRequest();
-        request.open('POST', './php/server.php');
+        const loadResult = new Promise((resolve, reject) => {
+            const request = new XMLHttpRequest();
+            request.open('POST', './php/server.php');
 
-        const formData = new FormData(form);
-        request.send(formData);
+            const formData = new FormData(form);
+            request.send(formData);
 
-        request.addEventListener('load', () => {
-            if (request.status === 200) {
-                console.log(request.response);
-                
-                form.reset();
-                totalBlockMessage(messages.success);
-            }
-            else {
+            request.addEventListener('load', () => {
+                console.log(request.status);
+                if(request.status === 200) {
+                    resolve(request.response);
+                }
+                else {
+                    reject();
+                }
+            });
+        });
+    
+        loadResult.then(result => {
+            console.log(result);
+            form.reset();
+            totalBlockMessage(messages.success);
+        }).catch(() => {
                 totalBlockMessage(messages.failure);
-            }
         });
     };
 
