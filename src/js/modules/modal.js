@@ -12,9 +12,13 @@ const modal = () => {
         failure: 'Произошла ошибка при отправке'
     };
 
+// Функция подсчитывает ширину скролла на экране и возвращает ее;
+
     const detectPadding = () => {
         return window.innerWidth - document.documentElement.clientWidth;
     };
+
+// Функция отображает модальное окно;
 
     const displayModalWindow = () => {
         modalWindow.classList.add('modal_show');
@@ -27,6 +31,8 @@ const modal = () => {
         });
         window.removeEventListener('scroll', displayExstraModalWindow);
     };
+
+// Функция скрывает модальное окно;
 
     const hideModalWindow = () => {
         modalWindow.classList.remove('modal_show');
@@ -42,6 +48,8 @@ const modal = () => {
         }, 800);
     };
 
+// Функция отображает окно успешной отправки или ошибки для формы на сайте;
+
     const displayExstraModalWindow = () => {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.offsetHeight) {
             displayModalWindow();
@@ -49,19 +57,30 @@ const modal = () => {
         }
     };
 
+// Функция шаблон для генерации POST запросов;
+
+    const sendPost = async (url, data) => {
+        const request = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: data
+        });
+
+        return await request.json();
+    };
+
+// Функция постит данные из формы на сайте в json базу;
+
     const sendDataToServer = (form) => {
         const formData = new FormData(form);
+        const obj = {};
+        formData.forEach((value, key) => {
+            obj[key] = value;
+        });
 
-        fetch('./php/server.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if(response.ok) {
-                return response;
-            }
-        })
-        .then(response => response.text())
+        sendPost('http://localhost:3000/requests', JSON.stringify(obj))
         .then(response => {
             console.log(response);
             totalBlockMessage(messages.success);
@@ -72,6 +91,8 @@ const modal = () => {
         });
     };
 
+// под-Функция отображаение статуса загрузки при отправки данных из формы;
+
     const statusBlockMessage = (form) => {
         const img = document.createElement('img');
         img.classList.add('modal__spinner');
@@ -79,6 +100,8 @@ const modal = () => {
 
         form.insertAdjacentElement('afterEnd', img);
     };
+
+// под-Функция отображаение статуса успех\ошибка при отправки данных из формы;
 
     const totalBlockMessage = (text) => {
         const img = document.querySelector('.modal__spinner');
@@ -100,6 +123,8 @@ const modal = () => {
             allForms[1].classList.remove('modal_hide');
         }, 3800);
     };
+
+// События связанные с модальными окнами или отправкой данных;
 
     modalActiveBtns.forEach(btn => {
         btn.addEventListener('click', displayModalWindow);
