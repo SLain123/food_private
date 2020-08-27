@@ -3,7 +3,7 @@
 import Card from './cardsConstructor.js';
 
 const webCardCreating = () => {
-
+    const rub = 75;
     const getData = () => {
         fetch('http://localhost:3000/menu')
         .then(data => {
@@ -22,16 +22,8 @@ const webCardCreating = () => {
     const createCard = arr => {
         const cardParentBlock = document.querySelector('.menu__field div.container');
 
-        arr.forEach(data => {
-            new Card(
-                data.img,
-                data.altimg,
-                data.title,
-                data.descr,
-                '',
-                data.price,
-                cardParentBlock
-            ).createNewCard();
+        arr.forEach(({img, altimg, title, descr, price}) => {
+            new Card(img, altimg, title, descr, '', (price * rub), cardParentBlock).createNewCard();
         });
     };
 
