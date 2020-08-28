@@ -1,3 +1,5 @@
+'use strict';
+
 const slider = () => {
     const allSlides = document.querySelectorAll('.offer__slide');
     const prevBtn = document.querySelector('.offer__slider-prev');
