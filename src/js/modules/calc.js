@@ -24,7 +24,7 @@ const calc = () => {
 // Функции проверяют каждый из инпутов отдельно, а также совместную корректность всех трех инпутов сразу;
 
     const checkParameter = (input, min, max) => {
-        if(input.value < min || input.value > max) {
+        if(input.value < min || input.value > max || input.value.match(/\D/g)) {
             input.style.border = '1px solid red';
             input.setAttribute('data-check', 'false');
         }
@@ -58,12 +58,12 @@ const calc = () => {
 // Основная функция, производит все вычисления и выводит их в спан на странице;
 
     const calculateIt = () => {
+        let calcResult = null;
+        const activeArr = [1.2, 1.375, 1.55, 1.725];
+        const gender = checkBtnParams(genderBlock.children);
+        const active = checkBtnParams(activeBlock.children);
+
         if(checkAllParams()) {
-            let calcResult = null;
-            const activeArr = [1.2, 1.375, 1.55, 1.725];
-            const gender = checkBtnParams(genderBlock.children);
-            const active = checkBtnParams(activeBlock.children);
-            
             if(gender === 0) {
                 calcResult = Math.floor((447.6 + 
                 (9.2 * +humanWeight.value) + 
@@ -79,6 +79,45 @@ const calc = () => {
             }
 
             resultSpan.innerHTML = calcResult;
+        }
+        addToLocalStorage(gender, +humanHeight.value, +humanWeight.value, +humanAge.value, active);
+    };
+
+// Функция добавляет данные в localStorage;
+
+    const addToLocalStorage = (gender, height, weight, age, active) => {
+        const storage = {gender, height, weight, age, active};
+        const storageJSON = JSON.stringify(storage);
+        localStorage.setItem('calc', storageJSON);
+    };
+
+// Функция извлекает данные из хранилища и после проверки добавляет в поля калькулятора, запускает новый расчет;
+
+    const makeActiveFromLocalData = () => {
+        if(localStorage.getItem('calc') !== null) {
+            const {gender, height, weight, age, active} = JSON.parse(localStorage.getItem('calc'));
+
+            makeActiveBtn(genderBlock.children[gender], genderBlock.children);
+            makeActiveBtn(activeBlock.children[active], activeBlock.children);
+            if(height !== 0) {
+                humanHeight.value = height;
+                checkParameter(humanHeight, 100, 280);
+            } else {
+                humanHeight.value = '';
+            }
+            if(weight !== 0) {
+                humanWeight.value = weight;
+                checkParameter(humanWeight, 40, 180);
+            } else {
+                humanWeight.value = '';
+            }
+            if(age !== 0) {
+                humanAge.value = age;
+                checkParameter(humanAge, 18, 100);
+            } else {
+                humanAge.value = '';
+            }
+            calculateIt();
         }
     };
 
@@ -109,7 +148,7 @@ const calc = () => {
         calculateIt();
     });
 
-    calculateIt();
+    makeActiveFromLocalData();
 };
 
 export default calc;
