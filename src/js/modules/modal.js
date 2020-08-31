@@ -1,7 +1,9 @@
 'use strict';
 
-const modal = () => {
-    const modalActiveBtns = document.querySelectorAll('[data-modal]');
+import {sendPost} from '../services/services';
+
+const modal = (activateBtns, sec) => {
+    const modalActiveBtns = document.querySelectorAll(activateBtns);
     const modalWindow = document.querySelector('.modal');
     const modalCloseBtn = document.querySelector('[data-close]');
     const allForms = document.querySelectorAll('form');
@@ -25,6 +27,8 @@ const modal = () => {
         modalWindow.classList.remove('modal_hide');
         document.body.style.paddingRight = `${detectPadding()}px`;
         document.body.classList.add('no-scroll');
+        localStorage.setItem('modalSec', true);
+        clearInterval(modalTimer);
 
         modalActiveBtns.forEach(btn => {
             btn.removeEventListener('click', displayModalWindow);
@@ -51,29 +55,16 @@ const modal = () => {
 // Функция отображает окно успешной отправки или ошибки для формы на сайте;
 
     const displayExstraModalWindow = () => {
-        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.offsetHeight) {
+        if ((window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.offsetHeight) && 
+        !localStorage.getItem('modalSec')) {
             displayModalWindow();
             window.removeEventListener('scroll', displayExstraModalWindow);
         }
     };
 
-// Функция шаблон для генерации POST запросов;
-
-    const sendPost = async (url, data) => {
-        const request = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: data
-        });
-
-        return await request.json();
-    };
-
 // Функция постит данные из формы на сайте в json базу;
 
-    const sendDataToServer = (form) => {
+    const sendDataToServer = form => {
         const formData = new FormData(form);
         const obj = {};
         formData.forEach((value, key) => {
@@ -93,7 +84,7 @@ const modal = () => {
 
 // под-Функция отображаение статуса загрузки при отправки данных из формы;
 
-    const statusBlockMessage = (form) => {
+    const statusBlockMessage = form => {
         const img = document.createElement('img');
         img.classList.add('modal__spinner');
         img.src = messages.load;
@@ -103,7 +94,7 @@ const modal = () => {
 
 // под-Функция отображаение статуса успех\ошибка при отправки данных из формы;
 
-    const totalBlockMessage = (text) => {
+    const totalBlockMessage = text => {
         const img = document.querySelector('.modal__spinner');
         const div = document.createElement('div');
 
@@ -123,6 +114,18 @@ const modal = () => {
             allForms[1].classList.remove('modal_hide');
         }, 3800);
     };
+
+// Открывает модальное окно через переданное количество секунд при первом посещении сайта, функция проверки и таймер;
+
+    const displayModalOnce = () => {
+        if(localStorage.getItem('modalSec')) {
+            clearInterval(modalTimer);
+        }
+    };
+
+    const modalTimer = setTimeout(() => {
+        displayModalWindow();
+    }, sec);
 
 // События связанные с модальными окнами или отправкой данных;
 
@@ -148,6 +151,9 @@ const modal = () => {
             sendDataToServer(form);
         });
     });
+
+// Запуск таймера на показ модального окна;
+    displayModalOnce();
 };
 
 export default modal;

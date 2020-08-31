@@ -1,14 +1,23 @@
 'use strict';
 
-const slider = () => {
-    const allSlides = document.querySelectorAll('.offer__slide');
-    const prevBtn = document.querySelector('.offer__slider-prev');
-    const nextBtn = document.querySelector('.offer__slider-next');
-    const currentSlideSpan = document.querySelector('#current');
-    const totalSlideSpan = document.querySelector('#total');
-    const wrapper = document.querySelector('.offer__slider-wrapper');
-    const inner = document.querySelector('.offer__slider-inner');
-    const slider = document.querySelector('.offer__slider');
+const slider = ({
+    slideSelector,
+    prevBtnSelector,
+    nextBtnSelector,
+    wrapperBlockSelector,
+    sliderBlockSelector,
+    innerBlockSelector,
+    currentSlideBlockID,
+    totalSlideBlockID
+}) => {
+    const allSlides = document.querySelectorAll(slideSelector);
+    const prevBtn = document.querySelector(prevBtnSelector);
+    const nextBtn = document.querySelector(nextBtnSelector);
+    const currentSlideSpan = document.querySelector(currentSlideBlockID);
+    const totalSlideSpan = document.querySelector(totalSlideBlockID);
+    const wrapper = document.querySelector(wrapperBlockSelector);
+    const inner = document.querySelector(innerBlockSelector);
+    const slider = document.querySelector(sliderBlockSelector);
     let currentSlide = 0;
 
     inner.style.width = `${100 * allSlides.length}${'%'}`; // задает ширину иннер блока по сумме ширины всех слайдов;
